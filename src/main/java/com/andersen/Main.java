@@ -3,10 +3,9 @@ package com.andersen;
 import com.andersen.Entities.Customer;
 import com.andersen.Entities.Good;
 import com.andersen.Entities.OrderT;
-import com.andersen.Services.CustomerService;
-import com.andersen.Services.GoodService;
-import com.andersen.Services.OrderService;
-import org.springframework.context.ConfigurableApplicationContext;
+import com.andersen.Repositories.CustomerRepository;
+import com.andersen.Repositories.GoodRepository;
+import com.andersen.Repositories.OrderRepository;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.Console;
@@ -21,12 +20,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ConfigurableApplicationContext contex = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ClassPathXmlApplicationContext contex = new ClassPathXmlApplicationContext("applicationContext.xml");
 
-        CustomerService customerService = (CustomerService) contex.getBean("customerService");
-        GoodService goodService = (GoodService) contex.getBean("goodService");
-        OrderService orderService = (OrderService) contex.getBean("orderService");
-
+        CustomerRepository customerRepository = contex.getBean(CustomerRepository.class);
+        GoodRepository goodRepository = contex.getBean(GoodRepository.class);
+        OrderRepository orderRepository = contex.getBean(OrderRepository.class);
         Console console = System.console();
 
         boolean back;
@@ -63,13 +61,13 @@ public class Main {
                     console.printf(fNEW_LINE);
                     switch (table) {
                         case 1:
-                            editCustomers(console, customerService);
+                            editCustomers(console, customerRepository);
                             break;
                         case 2:
-                            editGoods(console, goodService);
+                            editGoods(console, goodRepository);
                             break;
                         case 3:
-                            editOrders(console, orderService);
+                            editOrders(console, orderRepository);
                             break;
                         default:
                             back = true;
@@ -80,7 +78,7 @@ public class Main {
 
             } else if (chose == 2) {
 
-                List<Customer> customers = customerService.findAll();
+                List<Customer> customers = customerRepository.findAll();
                 int tmp = 1;
                 for (Customer customer : customers) {
                     console.printf(tmp++ + ". " + customer.getFio());
@@ -91,7 +89,7 @@ public class Main {
                 Customer customer = customers.get(tmp - 1);
                 if (customer.checkPassword(console.readPassword("Enter password:"))) {
                     console.printf(fNEW_LINE);
-                    List<Good> goods = goodService.findAll();
+                    List<Good> goods = goodRepository.findAll();
                     Set<Good> goodsSet = new HashSet<Good>();
                     tmp = 1;
                     for (Good good : goods) {
@@ -113,7 +111,7 @@ public class Main {
                     back = false;
 
                     OrderT orders = new OrderT(customer, goodsSet);
-                    orderService.add(orders);
+                    orderRepository.save(orders);
                 } else {
                     console.printf("The password is incorrect");
                     console.printf(fNEW_LINE);
@@ -131,12 +129,12 @@ public class Main {
         contex.close();
     }
 
-    private static void editCustomers(Console console, CustomerService customerService) {
+    private static void editCustomers(Console console, CustomerRepository customerRepository) {
         int tmp = 1;
         boolean back;
         do {
             back = false;
-            List<Customer> customers = customerService.findAll();
+            List<Customer> customers = customerRepository.findAll();
             for (Customer customer : customers) {
                 console.printf(tmp++ + ". " + customer.getFio());
                 console.printf(fNEW_LINE);
@@ -156,12 +154,12 @@ public class Main {
                 console.printf(fNEW_LINE);
                 customer.setPassword(String.valueOf(console.readPassword("Enter password: ")));
                 console.printf(fNEW_LINE);
-                customerService.add(customer);
+                customerRepository.save(customer);
             } else if (tmp == 2) {
                 tmp = Integer.parseInt(console.readLine("Select customer number:"));
                 console.printf(fNEW_LINE);
                 if (console.readLine("Delete? (Y/N):").toUpperCase().equals("Y")) {
-                    customerService.delete(customers.get(tmp - 1));
+                    customerRepository.delete(customers.get(tmp - 1));
                     console.printf(fNEW_LINE);
                 } else if (console.readLine("Delete? (Y/N):").toUpperCase().equals("N")) {
                     back = true;
@@ -174,13 +172,13 @@ public class Main {
         } while (!back);
     }
 
-    private static void editGoods(Console console, GoodService goodService) {
+    private static void editGoods(Console console, GoodRepository goodRepository) {
 
         int tmp = 1;
         boolean back;
         do {
             back = false;
-            List<Good> goodList = goodService.findAll();
+            List<Good> goodList = goodRepository.findAll();
 
             for (Good good : goodList) {
                 console.printf(tmp++ + ". " + good.getTitle());
@@ -200,13 +198,13 @@ public class Main {
                 console.printf(fNEW_LINE);
                 good.setPrice(Integer.parseInt(console.readLine("Enter price:")));
                 console.printf(fNEW_LINE);
-                goodService.add(good);
+                goodRepository.save(good);
             } else if (tmp == 2) {
                 tmp = Integer.parseInt(console.readLine("Select good number:"));
                 console.printf(fNEW_LINE);
                 if (console.readLine("Delete? (Y/N):").toUpperCase().equals("Y")) {
                     console.printf(fNEW_LINE);
-                    goodService.delete(goodList.get(tmp - 1));
+                    goodRepository.delete(goodList.get(tmp - 1));
                 } else if (console.readLine("Delete? (Y/N):").toUpperCase().equals("N")) {
                     back = true;
                     console.printf(fNEW_LINE);
@@ -218,14 +216,14 @@ public class Main {
         } while (!back);
     }
 
-    private static void editOrders(Console console, OrderService orderService) {
+    private static void editOrders(Console console, OrderRepository orderRepository) {
 
         int tmp = 1;
         boolean back;
         do {
             back = false;
 
-            List<OrderT> orderTList = orderService.findAll();
+            List<OrderT> orderTList = orderRepository.findAll();
 
             for (OrderT orderT : orderTList) {
                 console.printf(tmp++ + ". " + orderT.getCustomer().getFio());
@@ -243,7 +241,7 @@ public class Main {
                 tmp = Integer.parseInt(console.readLine("Select order number:"));
                 console.printf(fNEW_LINE);
                 if (console.readLine("Delete? (Y/N):").toUpperCase().equals("Y")) {
-                    orderService.delete(orderTList.get(tmp - 1));
+                    orderRepository.delete(orderTList.get(tmp - 1));
                     console.printf(fNEW_LINE);
                 } else if (console.readLine("Delete? (Y/N):").toUpperCase().equals("N")) {
                     back = true;
