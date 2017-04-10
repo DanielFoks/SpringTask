@@ -2,7 +2,6 @@ package com.andersen.Entities;
 
 
 import javax.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -19,7 +18,8 @@ public class OrderT {
 
 
     @ManyToMany
-    @JoinTable(name="orders_goods")
+    @JoinTable(name = "order_good", joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "good_id", referencedColumnName = "id"))
     private Set<Good> goods;
 
     public OrderT(){}
@@ -58,13 +58,13 @@ public class OrderT {
         if (this == o) return true;
         if (!(o instanceof OrderT)) return false;
         OrderT orderT = (OrderT) o;
-        return Objects.equals(id, orderT.id) &&
-                Objects.equals(customer, orderT.customer) &&
-                Objects.equals(goods, orderT.goods);
+        return com.google.common.base.Objects.equal(id, orderT.id) &&
+                com.google.common.base.Objects.equal(customer, orderT.customer) &&
+                com.google.common.base.Objects.equal(goods, orderT.goods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customer, goods);
+        return com.google.common.base.Objects.hashCode(id, customer, goods);
     }
 }

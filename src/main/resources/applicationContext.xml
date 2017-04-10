@@ -9,33 +9,35 @@
 
     <jpa:repositories base-package="com.andersen.Repositories"/>
 
-
-
     <bean id="dataSource" class="oracle.jdbc.pool.OracleDataSource" destroy-method="close">
         <property name="URL" value="jdbc:oracle:thin:@localhost:1521/ORCL" />
         <property name="user" value="C##DIPLOMA_USER" />
-        <property name="password" value="fallen343" />
+        <property name="password" value="fallen123321" />
     </bean>
 
     <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="showSql" value="true"/>
         <property name="generateDdl" value="true"/>
-        <property name="database" value="MYSQL"/>
+        <property name="database" value="ORACLE"/>
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
         <property name="packagesToScan" value="com.andersen"/>
+
         <property name="jpaProperties">            <props>
             <prop
                     key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
             <prop key="hibernate.show_sql">true</prop>
+            <prop key="hibernate.enable_lazy_load_no_trans">true</prop>
         </props></property>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"></property>
     </bean>
+
+    <tx:annotation-driven />
 
 </beans>

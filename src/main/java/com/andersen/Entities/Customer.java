@@ -1,8 +1,9 @@
 package com.andersen.Entities;
 
+import com.google.common.base.Objects;
+
 import javax.persistence.*;
-import java.util.Objects;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 public class Customer {
@@ -15,10 +16,8 @@ public class Customer {
 
     private String password;
 
-    @OneToMany(mappedBy = "customer")
-    private Set<OrderT> orderTs;
-
-
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL)
+    private List<OrderT> orderTs;
 
     public Customer(){}
 
@@ -42,11 +41,11 @@ public class Customer {
         this.password = password;
     }
 
-    public Set<OrderT> getOrderTs() {
+    public List<OrderT> getOrderTs() {
         return orderTs;
     }
 
-    public void setOrderTs(Set<OrderT> orderTs) {
+    public void setOrderTs(List<OrderT> orderTs) {
         this.orderTs = orderTs;
     }
 
@@ -57,20 +56,19 @@ public class Customer {
         else return false;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Customer)) return false;
         Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id) &&
-                Objects.equals(fio, customer.fio) &&
-                Objects.equals(password, customer.password) &&
-                Objects.equals(orderTs, customer.orderTs);
+        return Objects.equal(id, customer.id) &&
+                Objects.equal(fio, customer.fio) &&
+                Objects.equal(password, customer.password) &&
+                Objects.equal(orderTs, customer.orderTs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fio, password, orderTs);
+        return Objects.hashCode(id, fio, password, orderTs);
     }
 }

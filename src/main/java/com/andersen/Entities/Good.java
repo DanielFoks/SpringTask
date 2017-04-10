@@ -1,7 +1,8 @@
 package com.andersen.Entities;
 
+import com.google.common.base.Objects;
+
 import javax.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -16,7 +17,7 @@ public class Good {
 
     private int price;
 
-    @ManyToMany(fetch = FetchType.EAGER,mappedBy = "goods")
+    @ManyToMany(mappedBy = "goods")
     private Set<OrderT> orderTs;
 
     public int getId() {
@@ -56,14 +57,14 @@ public class Good {
         if (this == o) return true;
         if (!(o instanceof Good)) return false;
         Good good = (Good) o;
-        return Objects.equals(id, good.id) &&
-                Objects.equals(price, good.price) &&
-                Objects.equals(title, good.title) &&
-                Objects.equals(orderTs, good.orderTs);
+        return Objects.equal(id, good.id) &&
+                Objects.equal(price, good.price) &&
+                Objects.equal(title, good.title) &&
+                Objects.equal(orderTs, good.orderTs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, price, orderTs);
+        return Objects.hashCode(id, title, price, orderTs);
     }
 }
