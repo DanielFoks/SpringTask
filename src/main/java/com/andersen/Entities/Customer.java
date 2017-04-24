@@ -3,6 +3,7 @@ package com.andersen.Entities;
 import com.google.common.base.Objects;
 
 import javax.persistence.*;
+import javax.validation.constraints.AssertTrue;
 import java.util.List;
 
 @Entity
@@ -41,6 +42,10 @@ public class Customer {
         this.password = password;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public List<OrderT> getOrderTs() {
         return orderTs;
     }
@@ -49,12 +54,14 @@ public class Customer {
         this.orderTs = orderTs;
     }
 
-    public boolean checkPassword(char[] password){
-        if (String.valueOf(password).equals(this.password)){
+    @AssertTrue
+    public boolean checkPassword(String password){
+        if (password.equals(this.password)){
             return true;
         }
         else return false;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -63,12 +70,11 @@ public class Customer {
         Customer customer = (Customer) o;
         return Objects.equal(id, customer.id) &&
                 Objects.equal(fio, customer.fio) &&
-                Objects.equal(password, customer.password) &&
-                Objects.equal(orderTs, customer.orderTs);
+                Objects.equal(password, customer.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, fio, password, orderTs);
+        return Objects.hashCode(id, fio, password);
     }
 }

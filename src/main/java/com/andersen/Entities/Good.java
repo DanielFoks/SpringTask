@@ -59,12 +59,18 @@ public class Good {
         Good good = (Good) o;
         return Objects.equal(id, good.id) &&
                 Objects.equal(price, good.price) &&
-                Objects.equal(title, good.title) &&
-                Objects.equal(orderTs, good.orderTs);
+                Objects.equal(title, good.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, title, price, orderTs);
+        return Objects.hashCode(id, title, price);
+    }
+
+    @Override
+    public String toString() {
+        return  "Title='" + title + '\'' +
+                ", Price=" + price +
+                '}';
     }
 }

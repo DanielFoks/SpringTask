@@ -1,6 +1,8 @@
 package com.andersen.Entities;
 
 
+import com.google.common.base.Objects;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -12,7 +14,7 @@ public class OrderT {
     private int id;
 
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
@@ -21,6 +23,19 @@ public class OrderT {
     @JoinTable(name = "order_good", joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "good_id", referencedColumnName = "id"))
     private Set<Good> goods;
+
+    @Transient
+    private String[] goodsString;
+
+    @Transient
+    public String[] getGoodsString() {
+        return goodsString;
+    }
+
+    @Transient
+    public void setGoodsString(String[] goodsString) {
+        this.goodsString = goodsString;
+    }
 
     public OrderT(){}
 
@@ -53,18 +68,28 @@ public class OrderT {
         this.goods = goods;
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof OrderT)) return false;
         OrderT orderT = (OrderT) o;
-        return com.google.common.base.Objects.equal(id, orderT.id) &&
-                com.google.common.base.Objects.equal(customer, orderT.customer) &&
-                com.google.common.base.Objects.equal(goods, orderT.goods);
+        return Objects.equal(id, orderT.id) &&
+                Objects.equal(customer, orderT.customer);
     }
 
     @Override
     public int hashCode() {
-        return com.google.common.base.Objects.hashCode(id, customer, goods);
+        return Objects.hashCode(id, customer);
+    }
+
+    @Override
+    public String toString() {
+        return "OrderT{" +
+                "customer=" + customer +
+                ", id=" + id +
+                ", goods=" + goods +
+                '}';
     }
 }
